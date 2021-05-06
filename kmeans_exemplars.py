@@ -61,6 +61,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
     def get_all_points_in_cluster(self, features, cluster_ids_x, cluster_number):
         # error memes here. This line from 
         # https://stackoverflow.com/questions/47863001/how-pytorch-tensor-get-the-index-of-specific-value
+        logging.info("get_all_points_in_cluster: cluster_number="+str(cluster_number))
+        logging.info("get_all_points_in_cluster: cluster_ids_x="+str(cluster_ids_x))
         original_dataset_idxs = ((cluster_ids_x == cluster_number).nonzero(as_tuple=False))
         
         logging.info("kmeans_exemplars.py: original_datset_idxs = "+str(original_dataset_idxs))
@@ -78,7 +80,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
     def get_cluster_exemplars(self, features, num_clusters):
         logging.info("total number of features: "+str(len(features)))
-        indices = torch.randperm(len(features))[:2500]
+        indices = torch.randperm(len(features))[:1000]
         subsample = features[indices]
         cluster_ids_x, cluster_centers = kmeans(
         X=subsample, num_clusters=num_clusters, distance='euclidean', device=self._device()
