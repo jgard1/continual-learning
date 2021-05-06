@@ -48,13 +48,13 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
     # get the point nearest the centroid
     def get_point_nearest_centroid(self, centroid, cluster_features, original_idxs):
         # https://discuss.pytorch.org/t/among-a-set-of-reference-vectors-how-to-return-the-closest-one-to-a-given-vector/20423
-        logging.info("get_point_nearest_centroid: cluster_features = "+str(cluster_features))
-        logging.info("centroid = "+str(centroid))
+        # logging.info("get_point_nearest_centroid: cluster_features = "+str(cluster_features))
+        # logging.info("centroid = "+str(centroid))
         distances = torch.sqrt(torch.sum((cluster_features.squeeze(1) - centroid) ** 2, dim=1)) 
-        logging.info("distances = "+str(distances))
-        logging.info("get_point_nearest_centroid: cluster_features.shape = "+str(cluster_features.shape))
-        logging.info("centroid.shape = "+str(centroid.shape))
-        logging.info("distances.shape = "+str(distances.shape))
+        # logging.info("distances = "+str(distances))
+        # logging.info("get_point_nearest_centroid: cluster_features.shape = "+str(cluster_features.shape))
+        # logging.info("centroid.shape = "+str(centroid.shape))
+        # logging.info("distances.shape = "+str(distances.shape))
         # memes = torch.unsqueeze(distances, 0)
         # logging.info("memes.shape = "+str(memes.shape))
         min_index = np.argmin(distances.numpy())
@@ -104,7 +104,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             # maps back to idx in entire dataset of features 
             original_idx_map[str(cluster_number)] = selected_feature_idx
         
-        return ret_features, original_idx_map
+        return torch.FloatTensor(ret_features), original_idx_map
 
 
     def reduce_exemplar_sets(self, m):
