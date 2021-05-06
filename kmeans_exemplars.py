@@ -80,7 +80,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
     def get_cluster_exemplars(self, features, num_clusters):
         logging.info("total number of features: "+str(len(features)))
-        indices = torch.randperm(len(features))[:2000]
+        indices = torch.randperm(len(features))[:3000]
         subsample = features[indices]
         cluster_ids_x, cluster_centers = kmeans(
         X=subsample, num_clusters=num_clusters, distance='euclidean', device=self._device()
