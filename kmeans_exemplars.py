@@ -68,11 +68,11 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
     def get_all_points_in_cluster(self, features, cluster_ids_x, cluster_number):
         # error memes here. This line from 
         # https://stackoverflow.com/questions/47863001/how-pytorch-tensor-get-the-index-of-specific-value
-        logging.info("get_all_points_in_cluster: cluster_number="+str(cluster_number))
-        logging.info("get_all_points_in_cluster: cluster_ids_x="+str(cluster_ids_x))
+        # logging.info("get_all_points_in_cluster: cluster_number="+str(cluster_number))
+        # logging.info("get_all_points_in_cluster: cluster_ids_x="+str(cluster_ids_x))
         original_dataset_idxs = ((cluster_ids_x == cluster_number).nonzero(as_tuple=False))
         
-        logging.info("kmeans_exemplars.py: original_datset_idxs = "+str(original_dataset_idxs))
+        # logging.info("kmeans_exemplars.py: original_datset_idxs = "+str(original_dataset_idxs))
         
         ret_features = features[original_dataset_idxs]
 
@@ -104,7 +104,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             # maps back to idx in entire dataset of features 
             original_idx_map[str(cluster_number)] = selected_feature_idx
         
-        return torch.FloatTensor(ret_features), original_idx_map
+        return torch.stack(ret_features), original_idx_map
 
 
     def reduce_exemplar_sets(self, m):
