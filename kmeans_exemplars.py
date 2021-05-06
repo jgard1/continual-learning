@@ -56,6 +56,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         logging.info("centroid.shape = "+str(centroid.shape))
         logging.info("distances.shape = "+str(distances.shape))
         memes = torch.unsqueeze(distances, 0)
+        logging.info("memes.shape = "+str(memes.shape))
         _, min_index = torch.min(memes)
 
         original_idx = original_idxs[str(min_index)]
