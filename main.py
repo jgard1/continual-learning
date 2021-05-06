@@ -16,11 +16,13 @@ from vae_models import AutoEncoder
 import callbacks as cb
 from train import train_cl
 from continual_learner import ContinualLearner
-from exemplars import ExemplarHandler
+from kmeans_exemplars import ExemplarHandler
 from replayer import Replayer
 from param_values import set_default_values
+import logging 
 
-
+# 
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO) #, filename="tardonuggets.txt")
 parser = argparse.ArgumentParser('./main.py', description='Run individual continual learning experiment.')
 parser.add_argument('--get-stamp', action='store_true', help='print param-stamp & exit')
 parser.add_argument('--seed', type=int, default=0, help='random seed (for each random-module used)')
@@ -116,6 +118,7 @@ eval_params.add_argument('--sample-n', type=int, default=64, help="# images to s
 
 
 def run(args, verbose=False):
+    print("main.py: line 119: yeetos, it's run(args, verbose=False)")
 
     # Set default arguments & check for incompatible options
     args.lr_gen = args.lr if args.lr_gen is None else args.lr_gen
@@ -644,6 +647,7 @@ def run(args, verbose=False):
 
 
 if __name__ == '__main__':
+    logging.info("main.py: yeetos it's the main method")
     # -load input-arguments
     args = parser.parse_args()
     # -set default-values for certain arguments based on chosen scenario & experiment

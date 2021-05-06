@@ -143,6 +143,7 @@ class TransformedDataset(Dataset):
 # specify available data-sets.
 AVAILABLE_DATASETS = {
     'mnist': datasets.MNIST,
+    'cifar100': datasets.CIFAR100,
 }
 
 # specify available transforms.
@@ -154,12 +155,17 @@ AVAILABLE_TRANSFORMS = {
     'mnist28': [
         transforms.ToTensor(),
     ],
+    'cifar100': [  # Josh memes here, not sure that this is the correct transofrm 
+        transforms.ToTensor(),
+    ],
+
 }
 
 # specify configurations of available data-sets.
 DATASET_CONFIGS = {
     'mnist': {'size': 32, 'channels': 1, 'classes': 10},
     'mnist28': {'size': 28, 'channels': 1, 'classes': 10},
+    'cifar100': {'size': 32, 'channels': 3, 'classes': 100},
 }
 
 

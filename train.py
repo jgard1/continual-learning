@@ -24,6 +24,7 @@ def train_cl(model, train_datasets, replay_mode="none", scenario="class",classes
     [generator]         None or <nn.Module>, if a seperate generative model should be trained (for [gen_iters] per task)
     [*_cbs]             <list> of call-back functions to evaluate training-progress'''
 
+    print("train.py: line 27:  entered train_cl ")
 
     # Set model in training-mode
     model.train()
@@ -45,6 +46,7 @@ def train_cl(model, train_datasets, replay_mode="none", scenario="class",classes
 
     # Loop over all tasks.
     for task, train_dataset in enumerate(train_datasets, 1):
+        print("train.py: line 48: looping over all tasks, current task number is: "+str(task))
 
         # If offline replay-setting, create large database of all tasks so far
         if replay_mode=="offline" and (not scenario=="task"):
@@ -312,6 +314,7 @@ def train_cl(model, train_datasets, replay_mode="none", scenario="class",classes
                 # create new dataset containing only all examples of this class
                 class_dataset = SubDataset(original_dataset=train_dataset, sub_labels=[class_id])
                 # based on this dataset, construct new exemplar-set for this class
+                print("train.py: line 315: about to construct exemplar set")
                 model.construct_exemplar_set(dataset=class_dataset, n=exemplars_per_class)
             model.compute_means = True
 
