@@ -79,15 +79,16 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
     def get_cluster_exemplars(self, features, num_clusters):
         logging.info("total number of features: "+str(len(features)))
         indices = torch.randperm(len(features))[:1000]
+        subsample = features[indices]
         cluster_ids_x, cluster_centers = kmeans(
-        X=features, num_clusters=num_clusters, distance='euclidean', device=self._device()
+        X=subsample, num_clusters=num_clusters, distance='euclidean', device=self._device()
         )
 
         original_idx_map = {}
         ret_features = []
         for cluster_number, centroid in enumerate(cluster_centers):
             
-            cluster_features, cluster_to_original_idxs = self.get_all_points_in_cluster(features, cluster_ids_x, cluster_number)
+            cluster_features, cluster_to_original_idxs = self.get_all_points_in_cluster(subsample, cluster_ids_x, cluster_number)
             selected_feature, selected_feature_idx = self.get_point_nearest_centroid(centroid, cluster_features, cluster_to_original_idxs)
             ret_features.append(selected_feature)
             
