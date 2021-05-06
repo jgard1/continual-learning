@@ -55,9 +55,9 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         logging.info("get_point_nearest_centroid: cluster_features.shape = "+str(cluster_features.shape))
         logging.info("centroid.shape = "+str(centroid.shape))
         logging.info("distances.shape = "+str(distances.shape))
-        memes = torch.unsqueeze(distances, 0)
-        logging.info("memes.shape = "+str(memes.shape))
-        _, min_index = torch.min(memes)
+        # memes = torch.unsqueeze(distances, 0)
+        # logging.info("memes.shape = "+str(memes.shape))
+        min_index = np.argmin(distances.numpy())
 
         original_idx = original_idxs[str(min_index)]
 
