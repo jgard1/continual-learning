@@ -135,7 +135,9 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 features = F.normalize(features, p=2, dim=1)
 
             # josh memes mod: here the features become just the near centroids 
+            logging.info("Doing herding, creating a total of "+str(min(n, n_max))+" clusters.")
             features_kmeans, original_idxs_map = self.get_cluster_exemplars(features, min(n, n_max))
+
 
             # calculate mean of all features
             class_mean = torch.mean(features_kmeans, dim=0, keepdim=True)
