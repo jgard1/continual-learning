@@ -50,7 +50,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         # https://discuss.pytorch.org/t/among-a-set-of-reference-vectors-how-to-return-the-closest-one-to-a-given-vector/20423
         logging.info("get_point_nearest_centroid: cluster_features = "+str(cluster_features))
         logging.info("centroid = "+str(centroid))
-        distances = torch.sqrt(torch.sum((cluster_features - centroid) ** 2, dim=1)) 
+        distances = torch.sqrt(torch.sum((cluster_features.squeeze(1) - centroid) ** 2, dim=1)) 
         logging.info("distances = "+str(distances))
         logging.info("get_point_nearest_centroid: cluster_features.shape = "+str(cluster_features.shape))
         logging.info("centroid.shape = "+str(centroid.shape))
