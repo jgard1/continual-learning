@@ -52,6 +52,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         logging.info("centroid = "+str(centroid))
         distances = torch.sqrt(torch.sum((cluster_features - centroid) ** 2, dim=1)) 
         logging.info("distances = "+str(distances))
+        logging.info("get_point_nearest_centroid: cluster_features.shape = "+str(cluster_features.shape))
         logging.info("distances.shape = "+str(distances.shape))
         _, min_index = torch.min(distances.unsqueeze())
 
