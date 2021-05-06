@@ -48,9 +48,11 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
     # get the point nearest the centroid
     def get_point_nearest_centroid(self, centroid, cluster_features, original_idxs):
         # https://discuss.pytorch.org/t/among-a-set-of-reference-vectors-how-to-return-the-closest-one-to-a-given-vector/20423
+        logger.info("get_point_nearest_centroid: cluster_features = "+str(cluster_features))
+        logger.info("get_point_nearest_centroid: cluster_features = "+str(centroid))
         distances = torch.sqrt(torch.sum((cluster_features - centroid) ** 2, dim=1)) 
        
-        _, min_index = torch.min(distances)
+        _, min_index = torch.min(distances.unsqueeze())
 
         original_idx = original_idxs[str(min_index)]
 
