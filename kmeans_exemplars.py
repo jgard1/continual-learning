@@ -166,7 +166,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 #####################################################################################
                 #  Josh memes mod: changed index_selected so that it uses our next level shit 
                 # index_selected = np.argmin(torch.norm(features_dists, p=2, dim=1))
-                shortlist_idx_selected = np.argmin(torch.norm(features_dists, p=2, dim=1))
+                shortlist_idx_selected = (np.argmin(torch.norm(features_dists, p=2, dim=1))).item()
                 # logging.info("shortlist_idx_selected: "+str(shortlist_idx_selected.item()))
                 # logging.info("original_idxs_map: "+str(original_idxs_map))
                 index_selected = original_idxs_map[str(shortlist_idx_selected.item())].item()
@@ -181,10 +181,10 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 list_of_selected.append(index_selected)
 
                 exemplar_set.append(dataset[index_selected][0].numpy())
-                exemplar_features[k] = copy.deepcopy(features_kmeans[index_selected])
+                exemplar_features[k] = copy.deepcopy(features_kmeans[shortlist_idx_selected])
 
                 # make sure this example won't be selected again
-                features_kmeans[index_selected] = features_kmeans[index_selected] + 10000
+                features_kmeans[shortlist_idx_selected] = features_kmeans[shortlist_idx_selected] + 10000
         else:
             logging.info("herding not enabled")
             indeces_selected = np.random.choice(n_max, size=min(n, n_max), replace=False)
