@@ -174,6 +174,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 #####################################################################################
 
                 if index_selected in list_of_selected:
+                    logging.info("index_selected: "+str(index_selected))
+                    logging.info("list_of_selected: "+str(list_of_selected))
                     raise ValueError("Exemplars should not be repeated!!!!")
                 list_of_selected.append(index_selected)
 
