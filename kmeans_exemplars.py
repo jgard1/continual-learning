@@ -169,7 +169,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 shortlist_idx_selected = (np.argmin(torch.norm(features_dists, p=2, dim=1))).item()
                 # logging.info("shortlist_idx_selected: "+str(shortlist_idx_selected.item()))
                 # logging.info("original_idxs_map: "+str(original_idxs_map))
-                index_selected = original_idxs_map[str(shortlist_idx_selected.item())].item()
+                index_selected = original_idxs_map[str(shortlist_idx_selected)].item()
                 logging.info("just selected: index_selected: "+str(index_selected))
                 # END JOSH Memes mod ################################################################
                 #####################################################################################
