@@ -170,12 +170,13 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 # logging.info("shortlist_idx_selected: "+str(shortlist_idx_selected.item()))
                 # logging.info("original_idxs_map: "+str(original_idxs_map))
                 index_selected = original_idxs_map[str(shortlist_idx_selected.item())].item()
+                logging.info("just selected: index_selected: "+str(index_selected))
                 # END JOSH Memes mod ################################################################
                 #####################################################################################
 
                 if index_selected in list_of_selected:
-                    logging.info("index_selected: "+str(index_selected))
-                    logging.info("list_of_selected: "+str(list_of_selected))
+                    logging.info("error: index_selected: "+str(index_selected))
+                    logging.info("error: list_of_selected: "+str(list_of_selected))
                     raise ValueError("Exemplars should not be repeated!!!!")
                 list_of_selected.append(index_selected)
 
