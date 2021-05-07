@@ -181,10 +181,10 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 list_of_selected.append(index_selected)
 
                 exemplar_set.append(dataset[index_selected][0].numpy())
-                exemplar_features[k] = copy.deepcopy(features[index_selected])
+                exemplar_features[k] = copy.deepcopy(features_kmeans[index_selected])
 
                 # make sure this example won't be selected again
-                features[index_selected] = features[index_selected] + 10000
+                features_kmeans[index_selected] = features_kmeans[index_selected] + 10000
         else:
             logging.info("herding not enabled")
             indeces_selected = np.random.choice(n_max, size=min(n, n_max), replace=False)
