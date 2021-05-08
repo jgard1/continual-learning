@@ -238,34 +238,43 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             feature = self.feature_extractor(x)    # (batch_size, feature_size)
         if self.norm_exemplars:
             feature = F.normalize(feature, p=2, dim=1)
-        x_feature = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
-        cur_min = float("inf")
-        cur_class = 0
-        for set_idx, P_y in enumerate(self.exemplar_sets):
-                exemplars = []
-                # Collect all exemplars in P_y into a <tensor> and extract their features
-                for ex in P_y:
-                    # logging.info("ex.shape: "+str(ex.shape))
-                    exemplars.append(torch.from_numpy(ex))
-                exemplars = torch.stack(exemplars).to(self._device())
-                logging.info("exemplars.shape: "+str(exemplars.shape))
-                with torch.no_grad():
-                    features = self.feature_extractor(exemplars)
-                if self.norm_exemplars:
-                    features = F.normalize(features, p=2, dim=1)
-                
-                logging.info("x_feature.shape: "+str(x_feature.shape))
-                logging.info("features.shape: "+str(features.shape))
-                feature_expanded = x_feature.expand_as(features)         # (batch_size, feature_size, n_classes)
-                logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
-                # For each data-point in [x], find which exemplar-mean is closest to its extracted features
-                dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
-                val, pred = dists.min(1)
-                if(val <= cur_min):
-                    cur_class = set_idx
+        x_features = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
 
+
+        preds = []
+        # incredibly inefficient, but this operation is only called once per item in test set at end, no other time
+        for x_idx, x_feature in enumerate(x_features):
+            cur_min = float("inf")
+            pred_class = 0
+            for set_idx, P_y in enumerate(self.exemplar_sets):
+                    exemplars = []
+                    # Collect all exemplars in P_y into a <tensor> and extract their features
+                    for ex in P_y:
+                        # logging.info("ex.shape: "+str(ex.shape))
+                        exemplars.append(torch.from_numpy(ex))
+                    exemplars = torch.stack(exemplars).to(self._device())
+                    logging.info("exemplars.shape: "+str(exemplars.shape))
+                    with torch.no_grad():
+                        features = self.feature_extractor(exemplars)
+                    if self.norm_exemplars:
+                        features = F.normalize(features, p=2, dim=1)
+                    
+                    logging.info("x_feature.shape: "+str(x_feature.shape))
+                    logging.info("features.shape: "+str(features.shape))
+                    feature_expanded = x_feature.expand_as(features)         # (batch_size, feature_size, n_classes)
+
+                    logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
+                    # For each data-point in [x], find which exemplar-mean is closest to its extracted features
+                    dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
+                    val, pred = dists.min(1)
+                    if(val.item() <= cur_min):
+                        pred_class = set_idx
+                        cur_min = val.item()
+            preds.append(pred_class)
+
+        torch_preds = torch.IntTensor(preds)
         # Set mode of model back
         self.train(mode=mode)
 
-        return cur_class
+        return torch_preds
 
