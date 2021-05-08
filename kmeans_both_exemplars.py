@@ -227,7 +227,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         OUTPUT:     preds = <tensor> of size (bsz,)"""
 
         # Set model to eval()-mode
-        logging.info("entered classify ith exemplars")
+        # logging.info("entered classify ith exemplars")
         mode = self.training
         self.eval()
 
@@ -254,21 +254,21 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                         # logging.info("ex.shape: "+str(ex.shape))
                         exemplars.append(torch.from_numpy(ex))
                     exemplars = torch.stack(exemplars).to(self._device())
-                    logging.info("exemplars.shape: "+str(exemplars.shape))
+                    # logging.info("exemplars.shape: "+str(exemplars.shape))
                     with torch.no_grad():
                         exemplar_features = self.feature_extractor(exemplars)
                     if self.norm_exemplars:
                         exemplar_features = F.normalize(exemplar_features, p=2, dim=1)
                     
-                    logging.info("x_feature.shape: "+str(x_feature.shape))
-                    logging.info("exemplar_features.shape: "+str(exemplar_features.shape))
+                    # logging.info("x_feature.shape: "+str(x_feature.shape))
+                    # logging.info("exemplar_features.shape: "+str(exemplar_features.shape))
                     feature_expanded = x_feature.expand_as(exemplar_features)         # (batch_size, feature_size, n_classes)
 
-                    logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
+                    # logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
                     # For each data-point in [x], find which exemplar-mean is closest to its extracted features
                     dists = (feature_expanded - exemplar_features).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
                     np_dists = dists.cpu().numpy()
-                    logging.info("np_dists.shape: "+str(np_dists.shape))
+                    # logging.info("np_dists.shape: "+str(np_dists.shape))
                     pred = np.argmin(np_dists)
                     val = np_dists[pred]
                     if(val <= cur_min):
