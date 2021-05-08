@@ -241,7 +241,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         x_features = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
 
 
-        preds = []
+        jaunes= []
         # incredibly inefficient, but this operation is only called once per item in test set at end, no other time
         for x_idx, x_feature in enumerate(feature):
             x_feature = x_feature.unsqueeze(0)
@@ -274,9 +274,9 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     if(val <= cur_min):
                         pred_class = set_idx
                         cur_min = val
-            preds.append(pred_class)
+            jaunes.append(pred_class)
 
-        torch_preds = torch.IntTensor(preds)
+        torch_preds = torch.IntTensor(preds).to(self._device())
         # Set mode of model back
         self.train(mode=mode)
 
