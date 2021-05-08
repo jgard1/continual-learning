@@ -7,7 +7,7 @@ import copy
 import numpy as np
 from kmeans_pytorch import kmeans, kmeans_predict
 import logging 
-import heappq
+import heapq
 
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -108,8 +108,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 mod_set = exclude_idx(start_set, feature_idx)
                 startle = self.startle(mod_set, feature)
                 init_list.append((startle, feature_idx))
-            heap = heappq.heapify(init_list)
-            min_startle, cur_min_idx = heappq.heappop(heap)
+            heap = heapq.heapify(init_list)
+            min_startle, cur_min_idx = heapq.heappop(heap)
 
             # iterate through remaining features, greedily maximizing startle
             idxs = [v for k, v in heap]
@@ -120,8 +120,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 startle = self.startle(mod_set, feature)
                 if startle > min_startle:
                     min_startle = startle
-                    heappq.heappush(heap, (startle, idx))
-                    min_startle, cur_min_idx = heappq.heappop(heap)
+                    heapq.heappush(heap, (startle, idx))
+                    min_startle, cur_min_idx = heapq.heappop(heap)
                     idxs = [v for k, v in heap]
                     cur_set = features[idxs]
            
