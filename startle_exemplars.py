@@ -106,12 +106,12 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             # initialize a min pq for getting rid of most familiar items
             num_exemplars = min(n, n_max)
             start_set = features[0:num_exemplars]
-            init_list = []
+            heap = []
             for feature_idx, feature in enumerate(start_set):
                 mod_set = self.exclude_idx(start_set, feature_idx)
                 startle = self.startle(mod_set, feature)
-                init_list.append((startle, feature_idx))
-            heap = heapq.heapify(init_list)
+                heap.append((startle, feature_idx))
+            heapq.heapify(heap)
             min_startle, cur_min_idx = heapq.heappop(heap)
 
             # iterate through remaining features, greedily maximizing startle
