@@ -156,13 +156,18 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             list_of_selected = []
             for k in range(min(n, n_max)):
                 if k>0:
+                    logging.info("k>0")
                     exemplar_sum = torch.sum(exemplar_features[:k], dim=0).unsqueeze(0)
                     features_means = (features_kmeans + exemplar_sum)/(k+1)
                     features_dists = features_means - class_mean
+                    logging.info("exemplar_sum: "+str(exemplar_sum))
+                    logging.info("features_dists: "+str(features_dists))
                 else:
+                    logging.info("k=0")
                     features_dists = features_kmeans - class_mean
-                logging.info("exemplar_sum: "+str(exemplar_sum))
-                logging.info("features_dists: "+str(features_dists))
+                    logging.info("exemplar_sum: "+str(exemplar_sum))
+                    logging.info("features_dists: "+str(features_dists))
+
 
                 #####################################################################################
                 #####################################################################################
