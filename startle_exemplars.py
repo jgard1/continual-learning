@@ -51,8 +51,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         # cos = nn.CosineSimilarity(dim=1, eps=1e-6)
         # all_cos_sims = cos(cur_features, candidate_expanded)
         dists = (cur_features - candidate_expanded).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
-        familiarity = torch.sum(dists, dim = 0).item() /n
-        startle = 1/familiarity 
+        startle = torch.sum(dists, dim = 0).item() /n
+        # startle = 1/familiarity 
         # logging.info("startle: "+str(startle))
         return startle 
 
