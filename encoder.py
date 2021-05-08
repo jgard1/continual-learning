@@ -1,7 +1,7 @@
 import torch
 from torch.nn import functional as F
 from linear_nets import MLP,fc_layer
-from kmeans_exemplars import ExemplarHandler
+from exemplars import ExemplarHandler
 from continual_learner import ContinualLearner
 from replayer import Replayer
 import utils
