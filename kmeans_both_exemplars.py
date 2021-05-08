@@ -238,13 +238,14 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             feature = self.feature_extractor(x)    # (batch_size, feature_size)
         if self.norm_exemplars:
             feature = F.normalize(feature, p=2, dim=1)
-        feature = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
+        x_feature = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
         cur_min = float("inf")
         cur_class = 0
         for set_idx, P_y in enumerate(self.exemplar_sets):
                 exemplars = []
                 # Collect all exemplars in P_y into a <tensor> and extract their features
                 for ex in P_y:
+                    # logging.info("ex.shape: "+str(ex.shape))
                     exemplars.append(torch.from_numpy(ex))
                 exemplars = torch.stack(exemplars).to(self._device())
                 logging.info("exemplars.shape: "+str(exemplars.shape))
@@ -253,8 +254,9 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 if self.norm_exemplars:
                     features = F.normalize(features, p=2, dim=1)
                 
-                logging.info("feature.shape: "+str(exemplars.shape))
-                feature_expanded = feature.expand_as(exemplars)         # (batch_size, feature_size, n_classes)
+                logging.info("x_feature.shape: "+str(x_feature.shape))
+                logging.info("features.shape: "+str(features.shape))
+                feature_expanded = x_feature.expand_as(features)         # (batch_size, feature_size, n_classes)
                 logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
                 # For each data-point in [x], find which exemplar-mean is closest to its extracted features
                 dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
