@@ -243,7 +243,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
         preds = []
         # incredibly inefficient, but this operation is only called once per item in test set at end, no other time
-        for x_idx, x_feature in enumerate(x_features):
+        for x_idx, x_feature in enumerate(feature):
+            x_feature = x_feature.unsqueeze(0)
             cur_min = float("inf")
             pred_class = 0
             for set_idx, P_y in enumerate(self.exemplar_sets):
