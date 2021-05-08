@@ -132,9 +132,9 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     cur_set = features[idxs]
            
             all_idxs = idxs + [cur_min_idx]
-            for k in all_idxs:
-                exemplar_set.append(dataset[k][0].numpy())
-                exemplar_features[k] = copy.deepcopy(features[k])
+            for k, idx in enumerate(all_idxs):
+                exemplar_set.append(dataset[idx][0].numpy())
+                exemplar_features[k] = copy.deepcopy(features[idx])
 
 
 
