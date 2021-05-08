@@ -161,6 +161,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     features_dists = features_means - class_mean
                 else:
                     features_dists = features_kmeans - class_mean
+                logging.info("exemplar_sum: "+str(exemplar_sum))
+                logging.info("features_dists: "+str(features_dists))
 
                 #####################################################################################
                 #####################################################################################
@@ -184,7 +186,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 exemplar_features[k] = copy.deepcopy(features_kmeans[shortlist_idx_selected])
 
                 # make sure this example won't be selected again
-                features_kmeans[shortlist_idx_selected] = features_kmeans[shortlist_idx_selected] + 10000
+                features_kmeans[shortlist_idx_selected] = features_kmeans[shortlist_idx_selected] + 100000000
         else:
             logging.info("herding not enabled")
             indeces_selected = np.random.choice(n_max, size=min(n, n_max), replace=False)
