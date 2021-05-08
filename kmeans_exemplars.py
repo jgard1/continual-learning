@@ -174,7 +174,8 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 #  Josh memes mod: changed index_selected so that it uses our next level shit 
                 # index_selected = np.argmin(torch.norm(features_dists, p=2, dim=1))
                 shortlist_idx_selected = (np.argmin(torch.norm(features_dists, p=2, dim=1))).item()
-                # logging.info("shortlist_idx_selected: "+str(shortlist_idx_selected.item()))
+                shortlist_idxs_selected = (np.argsort(torch.norm(features_dists, p=2, dim=1)))
+                logging.info("shortlist_idxs_selected: "+str(shortlist_idxs_selected))
                 # logging.info("original_idxs_map: "+str(original_idxs_map))
                 index_selected = original_idxs_map[str(shortlist_idx_selected)].item()
                 logging.info("just selected: index_selected: "+str(index_selected))
