@@ -165,7 +165,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 else:
                     logging.info("k=0")
                     features_dists = features_kmeans - class_mean
-                    logging.info("exemplar_sum: "+str(exemplar_sum))
+                    # logging.info("exemplar_sum: "+str(exemplar_sum))
                     logging.info("features_dists: "+str(features_dists))
 
 
