@@ -56,7 +56,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
 
     # simple helper function for 
-    def exclude_idx(self, start_set, idx)
+    def exclude_idx(self, start_set, idx):
         mod_set = copy.deepcopy(start_set)
         # super skecthy not sure if it does expected behavior
         mod_set = torch.cat((mod_set[:feature_idx,:], mod_set[(feature_idx + 1):, :]), axis = 0)
