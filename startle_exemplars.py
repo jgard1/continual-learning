@@ -53,7 +53,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         dists = (cur_features - candidate_expanded).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
         familiarity = torch.sum(dists, dim = 0).item() /n
         startle = 1/familiarity 
-        logging.info("startle: "+str(startle))
+        # logging.info("startle: "+str(startle))
         return startle 
 
 
@@ -115,7 +115,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 heap.append((startle, feature_idx))
             heapq.heapify(heap)
             min_startle, cur_min_idx = heapq.heappop(heap)
-            logging.info("heap: "+str(heap))
+            # logging.info("heap: "+str(heap))
 
             # iterate through remaining features, greedily maximizing startle
             idxs = [v for k, v in heap]
@@ -131,7 +131,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     idxs = [v for k, v in heap]
                     cur_set = features[idxs]
            
-            all_idxs = idxs + cur_min_idx
+            all_idxs = idxs + [cur_min_idx]
             for k in all_idxs:
                 exemplar_set.append(dataset[k][0].numpy())
                 exemplar_features[k] = copy.deepcopy(features[k])
