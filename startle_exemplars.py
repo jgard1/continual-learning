@@ -105,7 +105,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             start_set = features[0:num_exemplars]
             init_list = []
             for feature_idx, feature in enumerate(start_set):
-                mod_set = exclude_idx(start_set, feature_idx)
+                mod_set = self.exclude_idx(start_set, feature_idx)
                 startle = self.startle(mod_set, feature)
                 init_list.append((startle, feature_idx))
             heap = heapq.heapify(init_list)
@@ -116,7 +116,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             cur_set = features[idxs]
             for idx in range(num_exemplars, len(features)):
                 feature = features[idx]
-                mod_set = exclude_idx(start_set, feature_idx)
+                mod_set = self.exclude_idx(start_set, feature_idx)
                 startle = self.startle(mod_set, feature)
                 if startle > min_startle:
                     min_startle = startle
