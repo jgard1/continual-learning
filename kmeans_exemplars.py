@@ -156,25 +156,27 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             list_of_selected = []
             for k in range(min(n, n_max)):
                 if k>0:
-                    logging.info("k>0")
+                    # logging.info("k>0")
                     exemplar_sum = torch.sum(exemplar_features[:k], dim=0).unsqueeze(0)
                     features_means = (features_kmeans + exemplar_sum)/(k+1)
                     features_dists = features_means - class_mean
-                    logging.info("exemplar_sum: "+str(exemplar_sum))
-                    logging.info("features_dists: "+str(features_dists))
+                    # logging.info("exemplar_sum: "+str(exemplar_sum))
+                    # logging.info("features_dists: "+str(features_dists))
                 else:
-                    logging.info("k=0")
+                    # logging.info("k=0")
                     features_dists = features_kmeans - class_mean
                     # logging.info("exemplar_sum: "+str(exemplar_sum))
-                    logging.info("features_dists: "+str(features_dists))
+                    # logging.info("features_dists: "+str(features_dists))
 
 
                 #####################################################################################
                 #####################################################################################
                 #  Josh memes mod: changed index_selected so that it uses our next level shit 
                 # index_selected = np.argmin(torch.norm(features_dists, p=2, dim=1))
+                logging.info("features_dists.shape: "+str(features_dists.shape))
                 shortlist_idx_selected = (np.argmin(torch.norm(features_dists, p=2, dim=1))).item()
                 shortlist_idxs_selected = (np.argsort(torch.norm(features_dists, p=2, dim=1)))
+                logging.info("shortlist_idxs_selected.shape: "+str(shortlist_idxs_selected.shape))
                 logging.info("shortlist_idxs_selected: "+str(shortlist_idxs_selected))
                 # logging.info("original_idxs_map: "+str(original_idxs_map))
                 index_selected = original_idxs_map[str(shortlist_idx_selected)].item()
