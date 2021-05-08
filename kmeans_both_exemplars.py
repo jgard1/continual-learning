@@ -276,7 +276,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                         cur_min = val
             jaunes.append(pred_class)
 
-        torch_preds = torch.IntTensor(preds).to(self._device())
+        torch_preds = torch.IntTensor(jaunes).to(self._device())
         # Set mode of model back
         self.train(mode=mode)
 
