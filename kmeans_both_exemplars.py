@@ -267,10 +267,13 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
                     # For each data-point in [x], find which exemplar-mean is closest to its extracted features
                     dists = (feature_expanded - exemplar_features).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
-                    val, pred = dists.min(1)
-                    if(val.item() <= cur_min):
+                    np_dists = dists.cpu().numpy()
+                    logging.info("np_dists.shape: "+str(np_dists.shape))
+                    pred = np.argmin(np_dists)
+                    val = np_dists[pred]
+                    if(val <= cur_min):
                         pred_class = set_idx
-                        cur_min = val.item()
+                        cur_min = val
             preds.append(pred_class)
 
         torch_preds = torch.IntTensor(preds)
