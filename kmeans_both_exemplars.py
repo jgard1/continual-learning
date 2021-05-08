@@ -227,6 +227,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
         OUTPUT:     preds = <tensor> of size (bsz,)"""
 
         # Set model to eval()-mode
+        logging.info("entered classify ith exemplars")
         mode = self.training
         self.eval()
 
@@ -246,13 +247,15 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                 for ex in P_y:
                     exemplars.append(torch.from_numpy(ex))
                 exemplars = torch.stack(exemplars).to(self._device())
+                logging.info("exemplars.shape: "+str(exemplars.shape))
                 with torch.no_grad():
                     features = self.feature_extractor(exemplars)
                 if self.norm_exemplars:
                     features = F.normalize(features, p=2, dim=1)
                 
+                logging.info("feature.shape: "+str(exemplars.shape))
                 feature_expanded = feature.expand_as(exemplars)         # (batch_size, feature_size, n_classes)
-
+                logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
                 # For each data-point in [x], find which exemplar-mean is closest to its extracted features
                 dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
                 val, pred = dists.min(1)
