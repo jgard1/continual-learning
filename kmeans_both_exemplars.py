@@ -211,6 +211,13 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
     ####----CLASSIFICATION----####
 
+    # from https://stackoverflow.com/questions/21030391/how-to-normalize-an-array-in-numpy-to-a-unit-vector
+    def np_normalize(self, v):
+        norm=np.linalg.norm(v, ord=1)
+        if norm==0:
+            norm=np.finfo(v.dtype).eps
+        return v/norm
+
     def classify_with_exemplars(self, x, allowed_classes=None):
         """Classify images by nearest-means-of-exemplars (after transform to feature representation)
 
@@ -225,10 +232,15 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
 
         batch_size = x.size(0)
 
-        # Do the exemplar-means need to be recomputed?
-        if self.compute_means:
-            exemplar_means = []  #--> list of 1D-tensors (of size [feature_size]), list is of length [n_classes]
-            for P_y in self.exemplar_sets:
+        # Extract features for input data (and reorganize)
+        with torch.no_grad():
+            feature = self.feature_extractor(x)    # (batch_size, feature_size)
+        if self.norm_exemplars:
+            feature = F.normalize(feature, p=2, dim=1)
+        feature = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
+        cur_min = float("inf")
+        cur_class = 0
+        for set_idx, P_y in enumerate(self.exemplar_sets):
                 exemplars = []
                 # Collect all exemplars in P_y into a <tensor> and extract their features
                 for ex in P_y:
@@ -238,37 +250,17 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     features = self.feature_extractor(exemplars)
                 if self.norm_exemplars:
                     features = F.normalize(features, p=2, dim=1)
-                # Calculate their mean and add to list
-                mu_y = features.mean(dim=0, keepdim=True)
-                if self.norm_exemplars:
-                    mu_y = F.normalize(mu_y, p=2, dim=1)
-                exemplar_means.append(mu_y.squeeze())       # -> squeeze removes all dimensions of size 1
-            # Update model's attributes
-            self.exemplar_means = exemplar_means
-            self.compute_means = False
+                
+                feature_expanded = feature.expand_as(exemplars)         # (batch_size, feature_size, n_classes)
 
-        # Reorganize the [exemplar_means]-<tensor>
-        exemplar_means = self.exemplar_means if allowed_classes is None else [
-            self.exemplar_means[i] for i in allowed_classes
-        ]
-        means = torch.stack(exemplar_means)        # (n_classes, feature_size)
-        means = torch.stack([means] * batch_size)  # (batch_size, n_classes, feature_size)
-        means = means.transpose(1, 2)              # (batch_size, feature_size, n_classes)
-
-        # Extract features for input data (and reorganize)
-        with torch.no_grad():
-            feature = self.feature_extractor(x)    # (batch_size, feature_size)
-        if self.norm_exemplars:
-            feature = F.normalize(feature, p=2, dim=1)
-        feature = feature.unsqueeze(2)             # (batch_size, feature_size, 1)
-        feature = feature.expand_as(means)         # (batch_size, feature_size, n_classes)
-
-        # For each data-point in [x], find which exemplar-mean is closest to its extracted features
-        dists = (feature - means).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
-        _, preds = dists.min(1)
+                # For each data-point in [x], find which exemplar-mean is closest to its extracted features
+                dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
+                val, pred = dists.min(1)
+                if(val <= cur_min):
+                    cur_class = set_idx
 
         # Set mode of model back
         self.train(mode=mode)
 
-        return preds
+        return cur_class
 
