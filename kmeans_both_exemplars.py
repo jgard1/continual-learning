@@ -256,17 +256,17 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
                     exemplars = torch.stack(exemplars).to(self._device())
                     logging.info("exemplars.shape: "+str(exemplars.shape))
                     with torch.no_grad():
-                        features = self.feature_extractor(exemplars)
+                        exemplar_features = self.feature_extractor(exemplars)
                     if self.norm_exemplars:
-                        features = F.normalize(features, p=2, dim=1)
+                        exemplar_features = F.normalize(exemplar_features, p=2, dim=1)
                     
                     logging.info("x_feature.shape: "+str(x_feature.shape))
-                    logging.info("features.shape: "+str(features.shape))
-                    feature_expanded = x_feature.expand_as(features)         # (batch_size, feature_size, n_classes)
+                    logging.info("exemplar_features.shape: "+str(exemplar_features.shape))
+                    feature_expanded = x_feature.expand_as(exemplar_features)         # (batch_size, feature_size, n_classes)
 
                     logging.info("feature_expanded.shape: "+str(feature_expanded.shape))
                     # For each data-point in [x], find which exemplar-mean is closest to its extracted features
-                    dists = (feature_expanded - exemplars).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
+                    dists = (feature_expanded - exemplar_features).pow(2).sum(dim=1).squeeze()  # (batch_size, n_classes)
                     val, pred = dists.min(1)
                     if(val.item() <= cur_min):
                         pred_class = set_idx
