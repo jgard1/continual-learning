@@ -239,6 +239,40 @@ def get_multitask_experiment(name, scenario, tasks, data_dir="./datasets", only_
                 ) if scenario=='domain' else None
                 train_datasets.append(SubDataset(mnist_train, labels, target_transform=target_transform))
                 test_datasets.append(SubDataset(mnist_test, labels, target_transform=target_transform))
+    #######################JOSH MEMES MOD####################################################### 
+    #######################JOSH MEMES MOD#######################################################
+    elif name == "cifar100":
+        # check for number of tasks
+        if tasks>100:
+            raise ValueError("Experiment 'cifar100' cannot have more than 100 tasks!")
+        # configurations
+        config = DATASET_CONFIGS['cifar100']
+        classes_per_task = int(np.floor(100 / tasks))
+        if not only_config:
+            # prepare permutation to shuffle label-ids (to create different class batches for each random seed)
+            permutation = np.array(list(range(100))) if exception else np.random.permutation(list(range(100)))
+            target_transform = transforms.Lambda(lambda y, p=permutation: int(p[y]))
+            # prepare train and test datasets with all classes
+            cifar_train = get_dataset('cifar100', type="train", dir=data_dir, target_transform=None,
+                                      verbose=verbose)
+            cifar_test = get_dataset('cifar100', type="test", dir=data_dir, target_transform=None,
+                                     verbose=verbose)
+            # generate labels-per-task
+            labels_per_task = [
+                list(np.array(range(classes_per_task)) + classes_per_task * task_id) for task_id in range(tasks)
+            ]
+            # split them up into sub-tasks
+            train_datasets = []
+            test_datasets = []
+            for labels in labels_per_task:
+                target_transform = transforms.Lambda(
+                    lambda y, x=labels[0]: y - x
+                ) if scenario=='domain' else None
+                train_datasets.append(SubDataset(cifar_train, labels, target_transform=target_transform))
+                test_datasets.append(SubDataset(cifar_test, labels, target_transform=target_transform))
+
+    #######################JOSH MEMES MOD####################################################### 
+    #######################JOSH MEMES MOD#######################################################
     else:
         raise RuntimeError('Given undefined experiment: {}'.format(name))
 
