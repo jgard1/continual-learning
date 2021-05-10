@@ -73,7 +73,7 @@ def validate(model, dataset, batch_size=128, test_size=1024, verbose=True, allow
         print('=> precision: {:.3f}'.format(precision))
     return precision
 
-def josh_validate(model, dataset, batch_size=128, verbose=True, allowed_classes=None,
+def josh_validate(model, data, batch_size=128, verbose=True, allowed_classes=None,
              with_exemplars=False, plot_name = "yeet"):
     '''Evaluate precision (= accuracy or proportion correct) of a classifier ([model]) on [dataset].
 
@@ -86,11 +86,10 @@ def josh_validate(model, dataset, batch_size=128, verbose=True, allowed_classes=
 
 
     # Loop over batches in [dataset]
-    data_loader = utils.get_data_loader(dataset, batch_size, cuda=model._is_on_cuda())
     total_tested = total_correct = 0
     y_hat = []
     y = []
-    for data, labels in data_loader:
+    for data, labels in data:
         # -evaluate model (if requested, only on [allowed_classes])
         data, labels = data.to(model._device()), labels.to(model._device())
         labels = labels - allowed_classes[0] if (allowed_classes is not None) else labels
