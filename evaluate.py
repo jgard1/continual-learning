@@ -3,7 +3,7 @@ import torch
 import visual_visdom
 import visual_plt
 import utils
-
+from confusion import plot_confusion
 
 ####--------------------------------------------------------------------------------------------------------------####
 
@@ -59,6 +59,51 @@ def validate(model, dataset, batch_size=128, test_size=1024, verbose=True, allow
     model.train(mode=mode)
     if verbose:
         print('=> precision: {:.3f}'.format(precision))
+    return precision
+
+def josh_validate(model, dataset, batch_size=128, verbose=True, allowed_classes=None,
+             with_exemplars=False, plot_name):
+    '''Evaluate precision (= accuracy or proportion correct) of a classifier ([model]) on [dataset].
+
+    [allowed_classes]   None or <list> containing all "active classes" between which should be chosen
+                            (these "active classes" are assumed to be contiguous)'''
+
+    # Set model to eval()-mode
+    mode = model.training
+    model.eval()
+
+
+    # Loop over batches in [dataset]
+    data_loader = utils.get_data_loader(dataset, batch_size, cuda=model._is_on_cuda())
+    total_tested = total_correct = 0
+    y_hat = []
+    y = []
+    for data, labels in data_loader:
+        # -evaluate model (if requested, only on [allowed_classes])
+        data, labels = data.to(model._device()), labels.to(model._device())
+        labels = labels - allowed_classes[0] if (allowed_classes is not None) else labels
+        with torch.no_grad():
+            if with_exemplars:
+                predicted = model.classify_with_exemplars(data)
+                # # - in case of Domain-IL scenario, collapse all corresponding domains into same class
+                # if max(predicted).item() >= model.classes:
+                #     predicted = predicted % model.classes
+            else:
+                logging.info("Turd Beast you forgot to enable using exemplars")
+            
+        # -update statistics
+        total_correct += (predicted == labels).sum().item()
+        total_tested += len(data)
+        y_hat.extend(predicted.cpu().numpy().tolist())
+        y.extend(labels.cpu().numpy().tolist())
+    precision = total_correct / total_tested
+
+    file_name = str(plot_name).replace(" ","")
+    file_out = "./figs/"+str(file_name)
+    plot_confusion(y_hat, y, file_out, plot_name)
+
+    # Set model back to its initial mode, print result on screen (if requested) and return it
+    model.train(mode=mode)
     return precision
 
 

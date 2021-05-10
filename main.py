@@ -114,6 +114,7 @@ eval_params.add_argument('--prec-log', type=int, default=200, metavar="N", help=
 eval_params.add_argument('--prec-n', type=int, default=1024, help="# samples for evaluating solver's precision")
 eval_params.add_argument('--sample-log', type=int, default=500, metavar="N", help="# iters after which to plot samples")
 eval_params.add_argument('--sample-n', type=int, default=64, help="# images to show")
+eval_params.add_argument('--plot_name', type=str, default='dank memes', help=" the name for the confusion matrix")
 
 
 
@@ -471,11 +472,24 @@ def run(args, verbose=False):
 
     # -with exemplars
     if args.use_exemplars:
-        precs = [evaluate.validate(
-            model, test_datasets[i], verbose=False, test_size=None, task=i+1, with_exemplars=True,
-            allowed_classes=list(range(classes_per_task*i, classes_per_task*(i+1))) if scenario=="task" else None
-        ) for i in range(args.tasks)]
-        average_precs_ex = sum(precs) / args.tasks
+        # precs = [evaluate.validate(
+        #     model, test_datasets[i], verbose=False, test_size=None, task=i+1, with_exemplars=True,
+        #     allowed_classes=list(range(classes_per_task*i, classes_per_task*(i+1))) if scenario=="task" else None
+        # ) for i in range(args.tasks)]
+        # average_precs_ex = sum(precs) / args.tasks
+
+        ##############################JOSH MEME MODS###################################################### 
+        ##############################JOSH MEME MODS###################################################### 
+        # josh_data = []
+        # for i in range(args.tasks):
+        #     josh_data.extend(test_datasets[i][0:1024])
+        josh_data = torch.stack(test_datasets)
+        prec = evaluate.josh_validate(model, josh_data, batch_size=128, verbose=True, allowed_classes=None,
+             with_exemplars=False, args.plot_sname)
+        average_precs_ex = prec
+
+        ##############################JOSH MEME MODS###################################################### 
+        ##############################JOSH MEME MODS######################################################
         # -print on screen
         if verbose:
             print(" Precision on test-set (classification using exemplars):")
@@ -584,6 +598,7 @@ def run(args, verbose=False):
     logging.info("IMPORTANT: CLASSIFICATION TIME = "+str(eval_time))
     #-------------------------------------------------------------------------------------------------#
 
+
     #------------------#
     #----- OUTPUT -----#
     #------------------#
@@ -605,47 +620,47 @@ def run(args, verbose=False):
     #--------------------#
 
     # If requested, generate pdf
-    if args.pdf:
-        # -open pdf
-        plot_name = "{}/{}.pdf".format(args.p_dir, param_stamp)
-        pp = visual_plt.open_pdf(plot_name)
+    # if args.pdf:
+    #     # -open pdf
+    #     plot_name = "{}/{}.pdf".format(args.p_dir, param_stamp)
+    #     pp = visual_plt.open_pdf(plot_name)
 
-        # -show samples and reconstructions (either from main model or from separate generator)
-        if args.feedback or args.replay=="generative":
-            evaluate.show_samples(model if args.feedback else generator, config, size=args.sample_n, pdf=pp)
-            for i in range(args.tasks):
-                evaluate.show_reconstruction(model if args.feedback else generator, test_datasets[i], config, pdf=pp,
-                                             task=i+1)
+    #     # -show samples and reconstructions (either from main model or from separate generator)
+    #     if args.feedback or args.replay=="generative":
+    #         evaluate.show_samples(model if args.feedback else generator, config, size=args.sample_n, pdf=pp)
+    #         for i in range(args.tasks):
+    #             evaluate.show_reconstruction(model if args.feedback else generator, test_datasets[i], config, pdf=pp,
+    #                                          task=i+1)
 
-        # -show metrics reflecting progression during training
-        figure_list = []  #-> create list to store all figures to be plotted
+    #     # -show metrics reflecting progression during training
+    #     figure_list = []  #-> create list to store all figures to be plotted
 
-        # -generate all figures (and store them in [figure_list])
-        key = "acc per task ({} task)".format("all classes up to trained" if scenario=='class' else "only classes in")
-        plot_list = []
-        for i in range(args.tasks):
-            plot_list.append(metrics_dict[key]["task {}".format(i + 1)])
-        figure = visual_plt.plot_lines(
-            plot_list, x_axes=metrics_dict["x_task"],
-            line_names=['task {}'.format(i + 1) for i in range(args.tasks)]
-        )
-        figure_list.append(figure)
-        figure = visual_plt.plot_lines(
-            [metrics_dict["average"]], x_axes=metrics_dict["x_task"],
-            line_names=['average all tasks so far']
-        )
-        figure_list.append(figure)
+    #     # -generate all figures (and store them in [figure_list])
+    #     key = "acc per task ({} task)".format("all classes up to trained" if scenario=='class' else "only classes in")
+    #     plot_list = []
+    #     for i in range(args.tasks):
+    #         plot_list.append(metrics_dict[key]["task {}".format(i + 1)])
+    #     figure = visual_plt.plot_lines(
+    #         plot_list, x_axes=metrics_dict["x_task"],
+    #         line_names=['task {}'.format(i + 1) for i in range(args.tasks)]
+    #     )
+    #     figure_list.append(figure)
+    #     figure = visual_plt.plot_lines(
+    #         [metrics_dict["average"]], x_axes=metrics_dict["x_task"],
+    #         line_names=['average all tasks so far']
+    #     )
+    #     figure_list.append(figure)
 
-        # -add figures to pdf (and close this pdf).
-        for figure in figure_list:
-            pp.savefig(figure)
+    #     # -add figures to pdf (and close this pdf).
+    #     for figure in figure_list:
+    #         pp.savefig(figure)
 
-        # -close pdf
-        pp.close()
+    #     # -close pdf
+    #     pp.close()
 
-        # -print name of generated plot on screen
-        if verbose:
-            print("\nGenerated plot: {}\n".format(plot_name))
+    #     # -print name of generated plot on screen
+    #     if verbose:
+    #         print("\nGenerated plot: {}\n".format(plot_name))
 
 
 
