@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def plot_confusion(y_true, y_pred, out_file, plot_title):
     labels = np.unique(y_true)
-    labels = [str(i) for i in labels]
+    # labels = [str(i) for i in labels]
     array = confusion_matrix(y_true, y_pred, labels)
     df_cm = pd.DataFrame(array, index = labels,
                       columns = labels)
