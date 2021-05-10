@@ -496,7 +496,7 @@ def run(args, verbose=False):
             josh_data.extend(copy.deepcopy(jaunes[0:1024]))
         # josh_data = torch.stack(test_datasets)
         prec = evaluate.josh_validate(model, josh_data, batch_size=128, verbose=True, allowed_classes=None,
-             with_exemplars=False, plot_name=args.plot_sname)
+             with_exemplars=False, plot_name=args.plot_name)
         average_precs_ex = prec
 
         ##############################JOSH MEME MODS###################################################### 
