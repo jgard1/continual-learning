@@ -206,6 +206,7 @@ def run(args, verbose=False):
     )
 
 
+
     #-------------------------------------------------------------------------------------------------#
 
     #------------------------------#
@@ -480,10 +481,10 @@ def run(args, verbose=False):
 
         ##############################JOSH MEME MODS###################################################### 
         ##############################JOSH MEME MODS###################################################### 
-        # josh_data = []
-        # for i in range(args.tasks):
-        #     josh_data.extend(test_datasets[i][0:1024])
-        josh_data = torch.stack(test_datasets)
+        josh_data = []
+        for i in range(args.tasks):
+            josh_data.extend(test_datasets[i][0:1024])
+        # josh_data = torch.stack(test_datasets)
         prec = evaluate.josh_validate(model, josh_data, batch_size=128, verbose=True, allowed_classes=None,
              with_exemplars=False, plot_name=args.plot_sname)
         average_precs_ex = prec
