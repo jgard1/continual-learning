@@ -487,7 +487,7 @@ def run(args, verbose=False):
         for i in range(1, args.tasks):
             jdata_loader = utils.get_data_loader(test_datasets[i], 128, cuda=model._is_on_cuda())
             jaunes = [(point, label) for (point, label) in jdata_loader]
-            josh_data = torch.cat(josh_data, jaunes[0:1024])
+            josh_data = josh_data.extend(jaunes[0:1024])
         # josh_data = torch.stack(test_datasets)
         prec = evaluate.josh_validate(model, josh_data, batch_size=128, verbose=True, allowed_classes=None,
              with_exemplars=False, plot_name=args.plot_sname)
