@@ -484,15 +484,15 @@ def run(args, verbose=False):
         ##############################JOSH MEME MODS###################################################### 
         josh_data = []
         jdata_loader = utils.get_data_loader(test_datasets[0], 128, cuda=model._is_on_cuda())
-        logging.info("jdata_loader: "+str(jdata_loader))
+        # logging.info("jdata_loader: "+str(jdata_loader))
         jaunes = [(point, label) for (point, label) in jdata_loader]
-        logging.info("jaunes: "+str(jaunes))
+        # logging.info("jaunes: "+str(jaunes))
         josh_data.extend(copy.deepcopy(jaunes[0:1024]))
-        logging.info("josh_data: "+str(josh_data))
+        # logging.info("josh_data: "+str(josh_data))
         for i in range(1, args.tasks):
             jdata_loader = utils.get_data_loader(test_datasets[i], 128, cuda=model._is_on_cuda())
             jaunes = [(point, label) for (point, label) in jdata_loader]
-            logging.info("josh_data: "+str(josh_data))
+            # logging.info("josh_data: "+str(josh_data))
             josh_data.extend(copy.deepcopy(jaunes[0:1024]))
         # josh_data = torch.stack(test_datasets)
         prec = evaluate.josh_validate(model, josh_data, batch_size=128, verbose=True, allowed_classes=None,
