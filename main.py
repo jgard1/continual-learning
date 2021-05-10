@@ -20,6 +20,7 @@ from exemplars import ExemplarHandler
 from replayer import Replayer
 from param_values import set_default_values
 import logging 
+import copy
 
 # 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO) #, filename="tardonuggets.txt")
