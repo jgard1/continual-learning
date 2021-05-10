@@ -16,7 +16,7 @@ from vae_models import AutoEncoder
 import callbacks as cb
 from train import train_cl
 from continual_learner import ContinualLearner
-from ablated_startle_exemplars import ExemplarHandler
+from boosted_exemplars import ExemplarHandler
 from replayer import Replayer
 from param_values import set_default_values
 import logging 
