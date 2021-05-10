@@ -161,7 +161,7 @@ class ExemplarHandler(nn.Module, metaclass=abc.ABCMeta):
             norm=np.finfo(v.dtype).eps
         return v/norm
 
- def classify_with_exemplars(self, x, allowed_classes=None):
+    def classify_with_exemplars(self, x, allowed_classes=None):
         """Classify images by nearest-means-of-exemplars (after transform to feature representation)
 
         INPUT:      x = <tensor> of size (bsz,ich,isz,isz) with input image batch
