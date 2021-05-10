@@ -62,7 +62,7 @@ def validate(model, dataset, batch_size=128, test_size=1024, verbose=True, allow
     return precision
 
 def josh_validate(model, dataset, batch_size=128, verbose=True, allowed_classes=None,
-             with_exemplars=False, plot_name):
+             with_exemplars=False, plot_name = "yeet"):
     '''Evaluate precision (= accuracy or proportion correct) of a classifier ([model]) on [dataset].
 
     [allowed_classes]   None or <list> containing all "active classes" between which should be chosen
