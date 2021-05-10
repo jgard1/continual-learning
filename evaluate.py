@@ -94,13 +94,8 @@ def josh_validate(model, data, batch_size=128, verbose=True, allowed_classes=Non
         data, labels = data.to(model._device()), labels.to(model._device())
         labels = labels - allowed_classes[0] if (allowed_classes is not None) else labels
         with torch.no_grad():
-            if with_exemplars:
-                predicted = model.classify_with_exemplars(data)
-                # # - in case of Domain-IL scenario, collapse all corresponding domains into same class
-                # if max(predicted).item() >= model.classes:
-                #     predicted = predicted % model.classes
-            else:
-                logging.info("Turd Beast you forgot to enable using exemplars")
+            predicted = model.classify_with_exemplars(data)
+
             
         # -update statistics
         total_correct += (predicted == labels).sum().item()
