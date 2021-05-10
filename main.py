@@ -16,7 +16,7 @@ from vae_models import AutoEncoder
 import callbacks as cb
 from train import train_cl
 from continual_learner import ContinualLearner
-from startle_exemplars import ExemplarHandler
+from exemplars import ExemplarHandler
 from replayer import Replayer
 from param_values import set_default_values
 import logging 
@@ -428,7 +428,7 @@ def run(args, verbose=False):
     if verbose:
         print("\nTraining...")
     # Keep track of training-time
-    start = time.time()
+    train_start = time.time()
     # Train model
     train_cl(
         model, train_datasets, replay_mode=args.replay, scenario=scenario, classes_per_task=classes_per_task,
@@ -438,19 +438,21 @@ def run(args, verbose=False):
         metric_cbs=metric_cbs, use_exemplars=args.use_exemplars, add_exemplars=args.add_exemplars,
     )
     # Get total training-time in seconds, and write to file
-    if args.time:
-        training_time = time.time() - start
-        time_file = open("{}/time-{}.txt".format(args.r_dir, param_stamp), 'w')
-        time_file.write('{}\n'.format(training_time))
-        time_file.close()
+    # if args.time:
+    #     training_time = time.time() - start
+    #     time_file = open("{}/time-{}.txt".format(args.r_dir, param_stamp), 'w')
+    #     time_file.write('{}\n'.format(training_time))
+    #     time_file.close()
 
+    training_time = time.time() - train_start
+    logging.info("IMPORTANT: TRAIN TIME = "+str(training_time))
 
     #-------------------------------------------------------------------------------------------------#
 
     #----------------------#
     #----- EVALUATION -----#
     #----------------------#
-
+    eval_start = time.time()
     if verbose:
         print("\n\nEVALUATION RESULTS:")
 
@@ -578,7 +580,8 @@ def run(args, verbose=False):
     if verbose and args.time:
         print("=> Total training time = {:.1f} seconds\n".format(training_time))
 
-
+    eval_time = time.time() - eval_start
+    logging.info("IMPORTANT: CLASSIFICATION TIME = "+str(eval_time))
     #-------------------------------------------------------------------------------------------------#
 
     #------------------#
