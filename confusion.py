@@ -6,7 +6,7 @@ import seaborn as sn
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def plot_confusion(y_true, y_pred, out_file, plot_title)
+def plot_confusion(y_true, y_pred, out_file, plot_title):
     labels = np.unique(y_true)
     labels = [str(i) for i in labels]
     array = confusion_matrix(y_true, y_pred, labels)
