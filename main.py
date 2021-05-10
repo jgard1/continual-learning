@@ -482,8 +482,11 @@ def run(args, verbose=False):
         ##############################JOSH MEME MODS###################################################### 
         ##############################JOSH MEME MODS###################################################### 
         jdata_loader = utils.get_data_loader(test_datasets[0], 128, cuda=model._is_on_cuda())
+        logging.info("jdata_loader: "+str(jdata_loader))
         jaunes = [(point, label) for (point, label) in jdata_loader]
+        logging.info("jaunes: "+str(jaunes))
         josh_data = jaunes[0:1024]
+        logging.info("josh_data: "+str(josh_data))
         for i in range(1, args.tasks):
             jdata_loader = utils.get_data_loader(test_datasets[i], 128, cuda=model._is_on_cuda())
             jaunes = [(point, label) for (point, label) in jdata_loader]
